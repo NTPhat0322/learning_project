@@ -3,9 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DemoCodeFirst.Domain.Entities
 {
-    public class Product
+    public class Product : AuditableEntity
     {
         [Key] // Primary key attribute 
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] //Cho phép DB tự sinh
         public Guid Id { get; set; }
         [Required] // Not null attribute
         [MaxLength(100)]
