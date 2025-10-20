@@ -1,6 +1,6 @@
-﻿using DemoCodeFirst.Domain.Entities;
+﻿using DemoCodeFirst.Api.DTOs;
+using DemoCodeFirst.Domain.Entities;
 using DemoCodeFirst.Infrastructure.Data;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,8 +32,15 @@ namespace DemoCodeFirst.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Product>> Create(Product product)
+        public async Task<ActionResult<Product>> Create(CreateProductRequestDTO request)
         {
+            Product product = new()
+            {
+                Name = request.Name,
+                Price = request.Price,
+                Quantity = request.Quantity,
+                CategoryId = request.CategoryId
+            };
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);

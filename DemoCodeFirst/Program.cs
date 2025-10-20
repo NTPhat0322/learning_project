@@ -1,4 +1,8 @@
+using DemoCodeFirst.Api.DTOs;
+using DemoCodeFirst.Application.Validations;
 using DemoCodeFirst.Infrastructure.Data;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -14,6 +19,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddTransient<IValidator<CreateProductRequestDTO>, CreateProductValidator>();
+
 
 var app = builder.Build();
 
