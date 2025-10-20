@@ -20,6 +20,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddTransient<IValidator<CreateProductRequestDTO>, CreateProductValidator>();
 
