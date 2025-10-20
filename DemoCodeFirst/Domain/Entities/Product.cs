@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DemoCodeFirst.Domain.Entities
 {
@@ -12,5 +13,8 @@ namespace DemoCodeFirst.Domain.Entities
         [Range(0, 999999)] // Price range validation
         public decimal Price { get; set; }
         public int Quantity { get; set; }
+        [ForeignKey("Category")]
+        public Guid? CategoryId { get; set; } // Foreign key to Category
+        public Category? Category { get; set; } = null!; // Navigation property
     }
 }
