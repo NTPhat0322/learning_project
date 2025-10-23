@@ -3,7 +3,9 @@ using DemoCodeFirst.Application.Validations;
 using DemoCodeFirst.Infrastructure.Data;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +26,19 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddTransient<IValidator<CreateProductRequestDTO>, CreateProductValidator>();
 
+//rate limiting 
+builder.Services.AddRateLimiter(rateLimiterOptions =>
+{
+    rateLimiterOptions.AddFixedWindowLimiter("fixed", options => {
+        options.PermitLimit = 2; // number of requests
+        options.Window = TimeSpan.FromSeconds(5); // time period
+        options.QueueLimit = 2;
+        options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+    });
+
+    rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+});
+
 
 var app = builder.Build();
 
@@ -36,8 +51,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseRateLimiter();
+
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers().RequireRateLimiting("fixed");
 
 app.Run();

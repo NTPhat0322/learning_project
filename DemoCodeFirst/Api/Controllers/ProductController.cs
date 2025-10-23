@@ -2,12 +2,14 @@
 using DemoCodeFirst.Domain.Entities;
 using DemoCodeFirst.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 
 namespace DemoCodeFirst.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[EnableRateLimiting("fixed")]
     public class ProductController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -18,6 +20,8 @@ namespace DemoCodeFirst.Api.Controllers
         }
 
         [HttpGet]
+        //[DisableRateLimiting]
+        //[EnableRateLimiting("fixed")]
         public async Task<ActionResult<IEnumerable<Product>>> GetAll()
         {
             return await _context.Products.ToListAsync();
@@ -26,7 +30,7 @@ namespace DemoCodeFirst.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetById(string id)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await _context.Products.FindAsync(Guid.Parse(id));
             if (product == null) return NotFound();
             return product;
         }
